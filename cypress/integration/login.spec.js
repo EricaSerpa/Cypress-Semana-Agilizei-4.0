@@ -8,35 +8,39 @@
 Ao autenticar com credenciais inválidas, deve visualizar uma mensagem de erro/ ou permanecer na tela de login
 */
 
+//HOOKS -> MOCHA
+// -> antes de cada ou todos os testes -> beforeEach / before
+// -> depois de cada ou todos os testes -> afterEach / after
+
+beforeEach(() => {
+    //cy.intercept
+    // 1. RouteMatcher - mapeamento, filtro da rota que a gente quer
+    // 2. RouteHandler (opcional) - controlar o que a rota vai retornar (mock)
+
+    //Request URL: https://res.cloudinary.com/douy56nkf/image/upload/v1588127894/twitter-build/bvxmlgckusmrwyivsnzr.svg
+    //Request Method: GET
+
+    cy.intercept({
+        method: 'GET',
+        hostname: 'res.cloudinary.com'
+    }, {
+        statusCode: 200,
+        fixture: 'img.png'
+    }).as('cloudinary')
+});
+
+
+
 describe('Twitter Clone - Login', () => {
     //Open Cypress | Set ".only"| Add only
     it('Ao autenticar com credenciais válidas, deve ser direcionado para o feed', () => {
+        cy.login()
 
-        //cy.intercept
-        // 1. RouteMatcher - mapeamento, filtro da rota que a gente quer
-        // 2. RouteHandler (opcional) - controlar o que a rota vai retornar (mock)
-
-        //Request URL: https://res.cloudinary.com/douy56nkf/image/upload/v1588127894/twitter-build/bvxmlgckusmrwyivsnzr.svg
-        //Request Method: GET
-
-        cy.intercept({
-            method: 'GET',
-            hostname: 'res.cloudinary.com'
-        }, {
-            statusCode: 200,
-            fixture:'img.png'
-
-        }).as('cloudinary')
-
-        cy.visit('http://twitter-clone-example.herokuapp.com');
-
-        cy.get('input[type=email]').type('joana@dark.com')
-        cy.get('input[type=password]').type('123456')
-        cy.get('button[type=submit]').click()
+        cy.visit('/');
 
         cy.get('nav ul li')
-        .should('be.visible')
-        .and('have.length', 6)
+            .should('be.visible')
+            .and('have.length', 6)
 
     });
 });
